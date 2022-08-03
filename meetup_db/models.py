@@ -16,7 +16,7 @@ class MeetupUsers(models.Model):
         (VISITOR, 'Visitor'),
     }
 
-    user_id = models.AutoField(  # Ник пользователя или телефон, уникальное поле, используется в других моделях
+    user_id = models.AutoField(  # Телефон пользователя, уникальное поле, используется в других моделях
         unique=True,
         primary_key=True,
     )
