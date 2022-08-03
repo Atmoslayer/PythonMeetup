@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User  # https://django.fun/docs/django/ru/4.0/ref/contrib/auth/
 
 
 # Про модели
@@ -11,19 +10,29 @@ class MeetupUsers(models.Model):
     SPEAKER = 'SPK'  # Роль докладчика
     VISITOR = 'USR'  # Роль посетителя
 
-    ROLE_CHOICES = [
+    ROLE_CHOICES = {
         (ORGANIZER, 'Organizer'),
         (SPEAKER, 'Speaker'),
         (VISITOR, 'Visitor'),
-    ]
+    }
 
-    user_name = models.ForeignKey(  # Ник пользователя, уникальное поле, используется в других моделях
-        User,  # https://django.fun/docs/django/ru/4.0/ref/contrib/auth/
-        null=False,
-        on_delete=models.CASCADE,
+    user_id = models.AutoField(  # Ник пользователя или телефон, уникальное поле, используется в других моделях
+        unique=True,
+        primary_key=True,
     )
+
+    user_name = models.CharField(  # Имя пользователя если есть, иначе обращение через 'Коллега'
+        max_length=50,
+        default='Коллега',
+    )
+
     user_role = models.CharField(  # Роль пользователя, Поле с выбором значения из ROLE_CHOICES
         max_length=3,
         choices=ROLE_CHOICES,  # https://docs.djangoproject.com/en/2.2/ref/models/fields/#choices
         default=VISITOR,
     )
+
+    def __str__(self):
+        user_note = f'{self.user_role}: {self.user_id} {self.user_name}'
+
+        return user_note
