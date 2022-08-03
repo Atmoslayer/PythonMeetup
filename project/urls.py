@@ -20,5 +20,5 @@ from meetup_db import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/<slug:slug>', views.user_detail, name='user_detail'),
+    path('user/', views.user_detail, name='user_detail'),
 ]
