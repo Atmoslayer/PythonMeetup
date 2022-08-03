@@ -8,7 +8,7 @@ from django.db import models
 class MeetupUsers(models.Model):
     ORGANIZER = 'ORG'  # Роль организатора
     SPEAKER = 'SPK'  # Роль докладчика
-    VISITOR = 'USR'  # Роль посетителя
+    VISITOR = 'VST'  # Роль посетителя
 
     ROLE_CHOICES = {
         (ORGANIZER, 'Organizer'),
@@ -16,7 +16,7 @@ class MeetupUsers(models.Model):
         (VISITOR, 'Visitor'),
     }
 
-    user_id = models.AutoField(  # Телефон пользователя, уникальное поле, используется в других моделях
+    user_id = models.IntegerField(  # Телефон пользователя, уникальное поле, используется в других моделях
         unique=True,
         primary_key=True,
     )
@@ -28,7 +28,7 @@ class MeetupUsers(models.Model):
 
     user_surname = models.CharField(  # Фамилия пользователя если есть, иначе None/Null
         max_length=50,
-        null=True
+        null=True,
     )
 
     user_role = models.CharField(  # Роль пользователя, Поле с выбором значения из ROLE_CHOICES
