@@ -16,7 +16,7 @@ class MeetupUsers(models.Model):
         (VISITOR, 'Visitor'),
     }
 
-    user_id = models.IntegerField(  # Телефон пользователя, уникальное поле, используется в других моделях
+    telegram_id = models.IntegerField(  # Телефон пользователя, уникальное поле, используется в других моделях
         unique=True,
         primary_key=True,
     )
@@ -24,11 +24,13 @@ class MeetupUsers(models.Model):
     user_name = models.CharField(  # Имя пользователя если есть, иначе обращение через 'Коллега'
         max_length=50,
         default='Коллега',
+        blank=True
     )
 
     user_surname = models.CharField(  # Фамилия пользователя если есть, иначе None/Null
         max_length=50,
         null=True,
+        blank=True
     )
 
     user_role = models.CharField(  # Роль пользователя, Поле с выбором значения из ROLE_CHOICES
