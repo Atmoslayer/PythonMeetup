@@ -26,6 +26,11 @@ class MeetupUsers(models.Model):
         default='Коллега',
     )
 
+    user_surname = models.CharField(  # Фамилия пользователя если есть, иначе None/Null
+        max_length=50,
+        null=True
+    )
+
     user_role = models.CharField(  # Роль пользователя, Поле с выбором значения из ROLE_CHOICES
         max_length=3,
         choices=ROLE_CHOICES,  # https://docs.djangoproject.com/en/2.2/ref/models/fields/#choices
