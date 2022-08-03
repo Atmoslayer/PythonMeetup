@@ -16,15 +16,15 @@ class MeetupUsers(models.Model):
         (VISITOR, 'Visitor'),
     }
 
-    telegram_id = models.IntegerField(  # Телефон пользователя, уникальное поле, используется в других моделях
+    telegram_id = models.IntegerField(  # ID пользователя, уникальное поле, используется в других моделях
         unique=True,
         primary_key=True,
+        null=False
     )
 
     user_name = models.CharField(  # Имя пользователя если есть, иначе обращение через 'Коллега'
         max_length=50,
-        default='Коллега',
-        blank=True
+        default='Коллега'
     )
 
     user_surname = models.CharField(  # Фамилия пользователя если есть, иначе None/Null
@@ -40,6 +40,6 @@ class MeetupUsers(models.Model):
     )
 
     def __str__(self):
-        user_note = f'{self.user_role}: {self.user_id} {self.user_name}'
+        user_note = f'{self.user_role}: {self.telegram_id} {self.user_name}'
 
         return user_note
