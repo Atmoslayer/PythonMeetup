@@ -47,17 +47,12 @@ if __name__ == '__main__':
 
     }
 
-    print(f'''
-    {get_user(test_id['Dima'])}
-    {get_user(test_id['Nikolai'])}
-    {get_user(test_id['Vasiliy'])}
-    {get_user(test_id['Ivan'])}
-    ''')
+    print('REQUEST USER:' , get_user(test_id['Ivan']))
 
     user_note = {
-        'telegram_id': 111111,
-        'name': 'Egor',
-        'surname': None,
-        'role': 'SPK'}
+        'telegram_id': 500,
+        'name': 'Olga',
+        'surname': 'Eroshina'
+    }
 
-    print(add_user(user_note))
+    print('ADD USER:', add_user(user_note))

@@ -13,10 +13,23 @@ def user_detail(request, telegram_id):
         'role': user_note.user_role
     }
 
+    print('REQUEST USER:', context)
+
     return JsonResponse(context)
 
 
 def create_user(request):
-    context = request.GET
+    params = request.GET
+    params = params.dict()
+    add_user = MeetupUsers(
+        telegram_id = params['telegram_id'],
+        user_name = params.setdefault('name', 'Коллега'),
+        user_surname = params.get('surname'),
+        user_role = params.setdefault('role', 'VST')
+    )
+    add_user.save()
 
-    return JsonResponse(context)
+    print('ADD USER:', add_user)
+
+
+    return user_detail(request, add_user.telegram_id)
