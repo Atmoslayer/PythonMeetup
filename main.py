@@ -8,6 +8,7 @@ from telegram.ext import MessageHandler, Filters
 from telegram_bot import start, get_answer_name, message_handler
 
 
+
 if __name__ == '__main__':
 
     load_dotenv()
@@ -24,4 +25,3 @@ if __name__ == '__main__':
     updater.start_polling()
     print('Бот вышел в сеть')
     updater.idle()
-
