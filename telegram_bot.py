@@ -9,9 +9,13 @@ menu_button = ['Меню']
 menu_selection_buttons_for_user = ['📋Программа', '🗣Задать вопрос спикеру', '❓Мои вопросы']
 menu_selection_buttons_for_organisator = ['📋Программа', '🗣Задать вопрос спикеру', '⚙Настройки', '❓Мои вопросы']
 menu_selection_buttons_for_speaker = ['📋Программа', '🗣Задать вопрос спикеру', '❓Мои вопросы']
-settings_buttons = ['Зарегистрировать спикера', 'Удалить спикера',
-                    'Зарегистрировать организатора', 'Удалить организатора',
-                    'Зарегистрировать мероприятие', 'Удалить мероприятие', '📍Главное меню']
+settings_buttons = ['✔Зарегистрировать спикера',
+                    '✔Зарегистрировать организатора',
+                    '✔Зарегистрировать мероприятие',
+                    '❌Удалить спикера',
+                     '❌Удалить организатора',
+                     '❌Удалить мероприятие',
+                    '📍Главное меню']
 
 
 def get_pretty_keyboard(buttons, rows_quantity):
@@ -37,9 +41,17 @@ def get_keyboard(buttons, one_time_keyboard=False):
     return reply_markup
 
 
+def get_lists_of_buttons(buttons, rows_quantity):
+    for button_number in range(0, len(buttons), rows_quantity):
+        yield buttons[button_number: button_number + rows_quantity]
+
+
 def get_pretty_keyboard(buttons, rows_quantity):
-    for button in range(0, len(buttons), rows_quantity):
-        yield buttons[button: button + rows_quantity]
+
+    reply_markup = ReplyKeyboardMarkup(
+        keyboard=list(get_lists_of_buttons(buttons, rows_quantity)), resize_keyboard=True
+    )
+    return reply_markup
 
 
 def start(update, context):
@@ -120,25 +132,26 @@ def message_handler(update, context):
         bot.main_menu()
         print(bot.state)
 
-    if text in ['Меню', '📍Главное меню'] and bot.state in ['select_a_section',
-                                                             'go_to_programs', 'go_to_questions',
-                                                             'go_to_my_questions', 'go_to_settings']:
+    if text in ['Меню',
+                '📍Главное меню'] \
+            and bot.state in ['select_a_section',
+                              'go_to_programs',
+                              'go_to_questions',
+                              'go_to_my_questions',
+                              'go_to_settings']:
         # Здесь делаем запрос к БД, получаем роль пользователя
         # Здесь делаем запрос со списком вопросов для юзера и спикера
-
 
         global role
 
         role = 'Организатор'
 
         if role == 'Пользователь':
-            reply_markup = get_keyboard(menu_selection_buttons_for_user)
+            reply_markup = get_pretty_keyboard(menu_selection_buttons_for_user, 3)
         if role == 'Спикер':
-            reply_markup = get_keyboard(menu_selection_buttons_for_speaker)
+            reply_markup = get_pretty_keyboard(menu_selection_buttons_for_speaker, 3)
         if role == 'Организатор':
-            reply_markup = ReplyKeyboardMarkup(
-            keyboard=list(get_pretty_keyboard(menu_selection_buttons_for_organisator, 3)), resize_keyboard=True
-        )
+            reply_markup = get_pretty_keyboard(menu_selection_buttons_for_organisator, 3)
 
         message = 'Выберите один из следующих пунктов: '
         bot.state = 'select_a_section'
@@ -152,9 +165,7 @@ def message_handler(update, context):
                     '📍Главное меню']
 
         message = 'Наша программа'
-        reply_markup = ReplyKeyboardMarkup(
-            keyboard=list(get_pretty_keyboard(programs, 2)), resize_keyboard=True
-        )
+        reply_markup = get_pretty_keyboard(programs, 2)
 
         bot.programs()
         print(bot.state)
@@ -168,18 +179,14 @@ def message_handler(update, context):
                     '📍Главное меню']
 
         message = 'Выберите, в какой области Вы хотите задать вопрос'
-        reply_markup = ReplyKeyboardMarkup (
-            keyboard=list(get_pretty_keyboard(programs, 2)), resize_keyboard=True
-        )
+        reply_markup = get_pretty_keyboard(programs, 2)
 
         bot.questions()
         print(bot.state)
 
     if text == '⚙Настройки' and bot.state == 'select_a_section' and role == 'Организатор':
         message = 'Выберите действие'
-        reply_markup = ReplyKeyboardMarkup(
-            keyboard=list(get_pretty_keyboard(settings_buttons, 2)), resize_keyboard=True
-        )
+        reply_markup = get_pretty_keyboard(settings_buttons, 1)
         bot.settings()
         print(bot.state)
 
