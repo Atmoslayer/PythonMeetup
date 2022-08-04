@@ -51,8 +51,8 @@ if __name__ == '__main__':
 
     user_note = {
         'telegram_id': 500,
-        'name': 'Olga',
-        'surname': 'Eroshina'
+        'name': 'Olga',  # Необязательный, при пустом значении ставится "Коллега"
+        'surname': 'Eroshina'  # Необязательный, при пустом значении ставится None
     }
 
     print('ADD USER:', add_user(user_note))
