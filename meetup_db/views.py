@@ -1,16 +1,16 @@
-from django.shortcuts import render
-from meetup_db.models import MeetupUsers
-
 from django.http import JsonResponse
 
-def user_detail(request):
-    print(request)
-    #all_users = MeetupUsers.objects.get(telegram_id=telegram_id)
-    all_users = MeetupUsers.objects.all()
-    print(all_users)
+from meetup_db.models import MeetupUsers
+
+
+def user_detail(request, telegram_id):
+    user_note = MeetupUsers.objects.get(telegram_id=telegram_id)
 
     context = {
-        'user_role': f'{all_users}'
+        'telegram_id': user_note.telegram_id,
+        'name': user_note.user_name,
+        'surname': user_note.user_surname,
+        'role': user_note.user_role
     }
 
     return JsonResponse(context)
