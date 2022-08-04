@@ -20,5 +20,6 @@ from meetup_db import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/<int:telegram_id>', views.user_detail, name='user_detail'),
+    path('user/<int:telegram_id>', views.user_detail),
+    path('create/', views.create_user),
 ]

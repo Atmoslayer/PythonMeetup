@@ -14,3 +14,9 @@ def user_detail(request, telegram_id):
     }
 
     return JsonResponse(context)
+
+
+def create_user(request):
+    context = request.GET
+
+    return JsonResponse(context)
