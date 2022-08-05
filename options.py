@@ -1,67 +1,47 @@
-import requests
+import os
+import django
 
-LOCALHOST = 'http://127.0.0.1:8000'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
+django.setup()
 
-
-def get_user(telegram_id: int) -> dict:
-    global LOCALHOST
-
-    page = 'user'
-    url = f'{LOCALHOST}/{page}/{telegram_id}'
-
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        user_notes = response.json()
-    except requests.exceptions.HTTPError:
-        user_notes = {
-            'telegram_id': None,
-            'name': None
-        }
-
-    return user_notes
-
-
-def add_user(user_note):
-    global LOCALHOST
-
-    page = 'create'
-    url = f'{LOCALHOST}/{page}/'
-
-    response = requests.get(url, params=user_note)
-    response.raise_for_status()
-    user_notes = response.json()
-
-    return user_notes
+from meetup_db.models import add_guest
+from meetup_db.models import add_speaker
+from meetup_db.models import edit_guest
+from meetup_db.models import edit_speaker
+from meetup_db.models import get_events
+from meetup_db.models import get_groups
+from meetup_db.models import get_user_status
 
 
 if __name__ == '__main__':
-    test_id = {
-        'Dima': 1293129176,
-        'Nikolai': 393728401,
-        'Vasiliy': 554347536,
-        'Ivan': 111,
-        'Null': 0  # Пользователь отсутствует
 
-    }
-
-    # print('REQUEST USER:' , get_user(test_id['Ivan']))
-
-    user_1 = {
+    guest_1 = {
         'telegram_id': 51747500,
         'name': 'Olga'  # Необязательный, при пустом значении ставится "Коллега"
     }
 
-    user_2 = {
-        'telegram_id': 5072270
-        # 'name': None  # Необязательный, при пустом значении ставится "Коллега"
+    guest_2 = {
+        'telegram_id': guest_1['telegram_id'],
+        'name': 'Olga NIKOLAEVNA'  # Необязательный, при пустом значении ставится "Коллега"
     }
 
-    user_3 = {
-        'telegram_id': 7,
-        'name': 'Jeames Bond'  # Необязательный, при пустом значении ставится "Коллега"
+
+
+    speaker_1 = {
+        'telegram_id': 555899,
+        'name': 'Сергей Петрович Шишкин',
+        'position': 'DevOps Engineer',
+        'organization': 'ОАО "Рубикон"',
+        'speeches_at_event': '14:50:00, Автоматизация рекламных коммуникаций'  # Уже из созданных  Speechs
     }
 
-    print('ADD USER:', add_user(user_1))
-    print('ADD USER:', add_user(user_2))
-    print('ADD USER:', add_user(user_3))
+    print('REQUEST GUEST:', get_user_status(guest_1['telegram_id']))  # Несуществующий гость
+    print('ADD GUEST:', add_guest(guest_1))
+    print('REQUEST GUEST:', get_user_status(guest_1['telegram_id']))
+    print('EDIT GUEST:', edit_guest(guest_2))
+    print('REQUEST GUEST:', get_user_status(guest_1['telegram_id']))  # Несуществующий спикер
+    print('REQUEST GUEST:', get_user_status(speaker_1['telegram_id']))  # Cуществующий спикер
+    # ДОРАБОТКА print('ADD GUEST:', add_speaker(speaker_1))
+    # ДОРАБОТКА print('REQUEST GUEST:', get_user_status(speaker_1['telegram_id']))
+
+

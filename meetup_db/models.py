@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
+
 '''
 Про модели
 https://developer.mozilla.org/ru/docs/Learn/Server-side/Django/Models#модель_для_начинающих
@@ -15,10 +17,11 @@ class Group(models.Model):  # Группы Вступительные, Пото1
 
 class Guest(models.Model):
     telegram_id = models.IntegerField(
+        'Telegram ID',
         unique=True,
         primary_key=True,
     )
-    name = models.CharField(max_length=50)  # Задается в диалоге с ботом
+    name = models.CharField('Имя', max_length=50)  # Задается в диалоге с ботом
 
     def __str__(self):
         return self.name
@@ -73,6 +76,7 @@ class Speech(models.Model):  # Выступление на блоке_мероп
 
 class Speaker(models.Model):  # Все поля задаются в админке или организатором ДО мероприятия
     telegram_id = models.IntegerField(
+        'Telegram ID',
         unique=True,
         primary_key=True,
     )
@@ -88,3 +92,104 @@ class Speaker(models.Model):  # Все поля задаются в админк
 
     def __str__(self):
         return self.name
+
+
+def add_guest(user_note: dict) -> dict:
+    add_guest = Guest(
+        telegram_id=user_note['telegram_id'],
+        name=user_note.setdefault('name', 'Коллега'),
+    )
+    add_guest.save()
+
+    return get_guest(add_guest.telegram_id)
+
+
+def add_speaker(user_note: dict) -> dict:
+    add_speaker = Speaker(
+        telegram_id=user_note['telegram_id'],
+        name=user_note.setdefault('name', 'Коллега'),
+        position=user_note['position'],
+        organization=user_note['organization'],
+        speeches_at_event=user_note['speeches_at_event'],
+    )
+    add_speaker.save()
+
+    return get_speaker(add_speaker.telegram_id)
+
+
+def edit_guest(user_note: dict) -> dict:
+    add_user = Guest(
+        telegram_id=user_note['telegram_id'],
+        name=user_note.setdefault('name', 'Коллега'),
+    )
+    add_user.save()
+
+    return get_guest(add_user.telegram_id)
+
+
+def edit_speaker(user_note: dict) -> dict:
+    add_user = Speaker(
+        telegram_id=user_note['telegram_id'],
+        name=user_note.setdefault('name', 'Коллега'),
+    )
+    add_user.save()
+
+    return get_guest(add_user.telegram_id)
+
+
+def get_events(group_id: int):
+    button_events = []
+    events = Event.objects.filter(group=group_id)
+    for event in events:
+        button = [f'{event.time} {event.title}', event.id]
+        button_events.append(button)
+    return button_events
+
+
+def get_groups():
+    button_groups = []
+    groups = Group.objects.all()
+    for group in groups:
+        button = [group.name, group.id]
+        button_groups.append(button)
+    return button_groups
+
+
+def get_guest(telegram_id: int) -> dict:
+    try:
+        user = Guest.objects.get(telegram_id=telegram_id)
+    except ObjectDoesNotExist:
+        return {}
+
+    user_note = {
+        'telegram_id': user.telegram_id,
+        'name': user.name,
+        'role': 'GUEST'
+    }
+
+    return user_note
+
+
+def get_speaker(telegram_id: int) -> dict:
+    try:
+        user = Speaker.objects.get(telegram_id=telegram_id)
+    except ObjectDoesNotExist:
+        return {}
+
+    user_note = {
+        'telegram_id': user.telegram_id,
+        'name': user.name,
+        'role': 'SPEAKER'
+    }
+
+    return user_note
+
+
+def get_user_status(telegram_id: int) -> bool:
+
+    if guest := get_guest(telegram_id):
+        return guest['role']
+    elif speaker := get_speaker(telegram_id):
+        return speaker['role']
+    else:
+        return False

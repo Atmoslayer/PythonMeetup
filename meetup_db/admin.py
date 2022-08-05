@@ -16,7 +16,7 @@ class GuestAdmin(admin.ModelAdmin):
 
 
 class SpeakerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'position', 'organization',)
+    list_display = ('telegram_id', 'name', 'position', 'organization',)
 
 
 class SpeechAdmin(admin.ModelAdmin):
@@ -24,7 +24,7 @@ class SpeechAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Event, EventAdmin)
-admin.site.register(Group)
-admin.site.register(Guest)
+admin.site.register(Group, GroupAdmin)
+admin.site.register(Guest, GuestAdmin)
 admin.site.register(Speech, SpeechAdmin)
 admin.site.register(Speaker, SpeakerAdmin)
