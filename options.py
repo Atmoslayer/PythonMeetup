@@ -1,7 +1,6 @@
 import requests
-from urllib.parse import urlsplit
 
-LOCALHOST ='http://127.0.0.1:8000'
+LOCALHOST = 'http://127.0.0.1:8000'
 
 
 def get_user(telegram_id: int) -> dict:
@@ -17,9 +16,7 @@ def get_user(telegram_id: int) -> dict:
     except requests.exceptions.HTTPError:
         user_notes = {
             'telegram_id': None,
-            'name': None,
-            'surname': None,
-            'role': None
+            'name': None
         }
 
     return user_notes
@@ -37,6 +34,7 @@ def add_user(user_note):
 
     return user_notes
 
+
 if __name__ == '__main__':
     test_id = {
         'Dima': 1293129176,
@@ -47,12 +45,23 @@ if __name__ == '__main__':
 
     }
 
-    print('REQUEST USER:' , get_user(test_id['Ivan']))
+    # print('REQUEST USER:' , get_user(test_id['Ivan']))
 
-    user_note = {
-        'telegram_id': 500,
-        'name': 'Olga',  # Необязательный, при пустом значении ставится "Коллега"
-        'surname': 'Eroshina'  # Необязательный, при пустом значении ставится None
+    user_1 = {
+        'telegram_id': 51747500,
+        'name': 'Olga'  # Необязательный, при пустом значении ставится "Коллега"
     }
 
-    print('ADD USER:', add_user(user_note))
+    user_2 = {
+        'telegram_id': 5072270
+        # 'name': None  # Необязательный, при пустом значении ставится "Коллега"
+    }
+
+    user_3 = {
+        'telegram_id': 7,
+        'name': 'Jeames Bond'  # Необязательный, при пустом значении ставится "Коллега"
+    }
+
+    print('ADD USER:', add_user(user_1))
+    print('ADD USER:', add_user(user_2))
+    print('ADD USER:', add_user(user_3))
