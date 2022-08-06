@@ -1,5 +1,7 @@
 import os
 
+import django
+
 from dotenv import load_dotenv
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
@@ -8,8 +10,8 @@ from telegram.ext import MessageHandler, Filters
 from telegram_bot import start, get_answer_name, message_handler
 
 
-
 if __name__ == '__main__':
+
 
     load_dotenv()
     bot_token = os.getenv('BOT_TOKEN')
