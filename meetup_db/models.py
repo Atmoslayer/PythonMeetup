@@ -137,21 +137,19 @@ def edit_speaker(user_note: dict) -> dict:
     return get_guest(add_user.telegram_id)
 
 
-def get_events(group_id: int):
-    button_events = []
-    events = Event.objects.filter(group=group_id)
+def get_events(group_id):
+    button_events={}
+    events = Event.objects.filter(group = group_id)
     for event in events:
-        button = [f'{event.time} {event.title}', event.id]
-        button_events.append(button)
+        button_events[f'{event.time} {event.title}'] = event.id
     return button_events
 
 
 def get_groups():
-    button_groups = []
+    button_groups={}
     groups = Group.objects.all()
     for group in groups:
-        button = [group.name, group.id]
-        button_groups.append(button)
+        button_groups[group.name] = group.id
     return button_groups
 
 
@@ -193,3 +191,15 @@ def get_user_status(telegram_id: int) -> bool:
         return speaker['role']
     else:
         return False
+
+def get_event_discription(event_id):
+
+    event = Event.objects.filter(id = event_id)[0]
+    event_discription = f'{event.time} {event.title}\n'
+    event_speeches = event.speeches.all()
+    for event_speech in event_speeches:
+        event_discription += f'\n{event_speech.title}\n'
+        speakers = event_speech.speakers_at_speech.all()
+        for speaker in speakers:
+            event_discription +=f' {speaker.name}\n {speaker.position}\n {speaker.organization}\n'
+    return event_discription
