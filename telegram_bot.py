@@ -1,9 +1,19 @@
+import os
+import django
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import MessageHandler, Filters
 
 from finite_state_machine import PythonMeetupBot
 from transitions import MachineError
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
+django.setup()
+
+from meetup_db.models import Group, Guest, Event, Speech, Speaker
+from meetup_db.models import get_events, get_groups, get_event_discription, add_guest, get_user_status
+
 
 menu_button = ['Меню']
 menu_selection_buttons_for_user = ['📋Программа', '🗣Задать вопрос спикеру', '❓Мои вопросы']
@@ -16,6 +26,10 @@ settings_buttons = ['✔Зарегистрировать спикера',
                      '❌Удалить организатора',
                      '❌Удалить мероприятие',
                     '📍Главное меню']
+program_buttons = []
+events_buttons = []
+main_back_button = ['📍Главное меню']
+back_button = ['↩Назад']
 
 
 def get_pretty_keyboard(buttons, rows_quantity):
@@ -60,9 +74,8 @@ def start(update, context):
     print(bot.state)
     global users_personal_data
     users_personal_data = {
-        'first_name': '',
-        'last_name': '',
-        'id': ''
+        'name': '',
+        'telegram_id': ''
     }
 
     user = update.message.from_user
@@ -94,10 +107,16 @@ def get_answer_name(update, context):
     query = update.callback_query
     query.answer()
     message_id = query.message.message_id
-    users_personal_data['id'] = update['callback_query']['message']['chat']['id']
+    users_personal_data['telegram_id'] = update['callback_query']['message']['chat']['id']
+
+
     if query.data == '1':
-        users_personal_data['first_name'] = update['callback_query']['message']['chat']['first_name']
-        users_personal_data['last_name'] = update['callback_query']['message']['chat']['last_name']
+        users_first_name = update['callback_query']['message']['chat']['first_name']
+        users_last_name = update['callback_query']['message']['chat']['last_name']
+        users_personal_data['name'] = users_first_name + ' ' + users_last_name
+        print(add_guest(users_personal_data))
+        print(users_personal_data)
+
         context.bot.delete_message(update.effective_chat.id, message_id)
         message = 'Добро пожаловать!'
         reply_markup = get_keyboard(menu_button)
@@ -124,7 +143,6 @@ def message_handler(update, context):
             users_personal_data['last_name'] = users_full_name[1]
 
     if bot.state == 'go_to_main_menu':
-        print(users_personal_data)
         # Здесь можно сохранять данные пользователя
 
         reply_markup = get_keyboard(menu_button)
@@ -139,36 +157,69 @@ def message_handler(update, context):
                               'go_to_questions',
                               'go_to_my_questions',
                               'go_to_settings']:
+
         # Здесь делаем запрос к БД, получаем роль пользователя
         # Здесь делаем запрос со списком вопросов для юзера и спикера
-
+        global questions
         global role
 
-        role = 'Организатор'
+        role = get_user_status(users_personal_data['telegram_id'])
 
-        if role == 'Пользователь':
+        if role == 'GUEST':
             reply_markup = get_pretty_keyboard(menu_selection_buttons_for_user, 3)
-        if role == 'Спикер':
+        if role == 'SPEAKER':
             reply_markup = get_pretty_keyboard(menu_selection_buttons_for_speaker, 3)
-        if role == 'Организатор':
+        if role == 'ORGANISATOR':
             reply_markup = get_pretty_keyboard(menu_selection_buttons_for_organisator, 3)
 
         message = 'Выберите один из следующих пунктов: '
         bot.state = 'select_a_section'
 
-    if text == '📋Программа' and bot.state == 'select_a_section':
+    if (text == '📋Программа' or text in back_button) and (bot.state == 'select_a_section' or bot.state == 'select_program'):
         # Здесь получаем список программ
-        programs = ['⛳Вступительные мероприятия',
-                    '🏔Поток "Эверест"',
-                    '🗻Поток "Альпы"',
-                    '🏁Заключительные мероприятия',
-                    '📍Главное меню']
+        # programs = ['⛳Вступительные мероприятия',
+        #             '🏔Поток "Эверест"',
+        #             '🗻Поток "Альпы"',
+        #             '🏁Заключительные мероприятия',
+        #             '📍Главное меню']
+
+        global program_buttons
+        global programs
+        programs = get_groups()
+        program_buttons = list(programs.keys())
 
         message = 'Наша программа'
-        reply_markup = get_pretty_keyboard(programs, 2)
+        reply_markup = get_pretty_keyboard(program_buttons + main_back_button, 2)
 
-        bot.programs()
+        bot.state = 'go_to_programs'
         print(bot.state)
+
+    if (text in program_buttons) and (bot.state == 'go_to_programs'):
+
+        global events_buttons
+        global events
+        program_id = programs[text]
+        events = get_events(program_id)
+        events_buttons = list(events.keys())
+        message = 'Предстоящие события'
+        reply_markup = get_pretty_keyboard(events_buttons + back_button, 2)
+        bot.state = 'select_program'
+        print(bot.state)
+
+    if text in back_button and bot.state == 'select_description':
+        message = 'Предстоящие события'
+        reply_markup = get_pretty_keyboard(events_buttons + back_button, 2)
+        bot.state = 'select_program'
+        print(bot.state)
+
+    if text in events_buttons and bot.state == 'select_program':
+        event_id = events[text]
+        event_description = get_event_discription(event_id)
+        message = event_description
+        reply_markup = get_keyboard(back_button)
+        bot.description_selected()
+        print(bot.state)
+
 
     if text == '🗣Задать вопрос спикеру' and bot.state == 'select_a_section':
         # Здесь получаем список программ по вопросам
@@ -189,6 +240,18 @@ def message_handler(update, context):
         reply_markup = get_pretty_keyboard(settings_buttons, 1)
         bot.settings()
         print(bot.state)
+
+    if text == '❓Мои вопросы' and bot.state == 'select_a_section' and role == 'Спикер':
+        questions_button = ['📍Главное меню']
+
+        if questions:
+            message = 'Список заданных Вам вопросов'
+            #Добавляем вопросы в questions_button и отображаем
+        else:
+            message = 'Вопросов пока нет'
+
+        reply_markup = get_pretty_keyboard(questions_button, 2)
+
 
     if message:
         update.message.reply_text(

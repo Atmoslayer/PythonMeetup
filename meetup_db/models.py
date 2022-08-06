@@ -236,3 +236,22 @@ def get_event_discription(event_id):
         for speaker in speakers:
             event_discription += f' {speaker.name}\n {speaker.position}\n {speaker.organization}\n'
     return event_discription
+
+
+def get_speech_events(group_id):
+    button_speech_events = {}
+    speech_events = Event.objects.filter(group=group_id).filter(event_type='SP')
+    for speech_event in speech_events:
+        button_speech_events[f'{speech_event.time} {speech_event.title}'] = speech_event.id
+    return button_speech_events
+
+
+def get_event_speekers(event_id):
+    button_speakers = {}
+    event = Event.objects.get(id=event_id)
+    event_speeches = event.speeches.all()
+    for event_speech in event_speeches:
+        speakers = event_speech.speakers_at_speech.all()
+        for speaker in speakers:
+            button_speakers[f'{speaker.name}\n{speaker.position}\n{speaker.organization}\n'] = speaker.telegram_id
+    return button_speakers
