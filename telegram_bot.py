@@ -12,7 +12,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
 from meetup_db.models import Group, Guest, Event, Speech, Speaker
-from meetup_db.models import get_events, get_groups, get_event_discription
+from meetup_db.models import get_events, get_groups, get_event_discription, add_guest, get_user_status
 
 
 menu_button = ['Меню']
@@ -74,9 +74,8 @@ def start(update, context):
     print(bot.state)
     global users_personal_data
     users_personal_data = {
-        'first_name': '',
-        'last_name': '',
-        'id': ''
+        'name': '',
+        'telegram_id': ''
     }
 
     user = update.message.from_user
@@ -108,12 +107,16 @@ def get_answer_name(update, context):
     query = update.callback_query
     query.answer()
     message_id = query.message.message_id
-    users_personal_data['id'] = update['callback_query']['message']['chat']['id']
+    users_personal_data['telegram_id'] = update['callback_query']['message']['chat']['id']
 
 
     if query.data == '1':
-        users_personal_data['first_name'] = update['callback_query']['message']['chat']['first_name']
-        users_personal_data['last_name'] = update['callback_query']['message']['chat']['last_name']
+        users_first_name = update['callback_query']['message']['chat']['first_name']
+        users_last_name = update['callback_query']['message']['chat']['last_name']
+        users_personal_data['name'] = users_first_name + ' ' + users_last_name
+        print(add_guest(users_personal_data))
+        print(users_personal_data)
+
         context.bot.delete_message(update.effective_chat.id, message_id)
         message = 'Добро пожаловать!'
         reply_markup = get_keyboard(menu_button)
@@ -154,18 +157,19 @@ def message_handler(update, context):
                               'go_to_questions',
                               'go_to_my_questions',
                               'go_to_settings']:
+
         # Здесь делаем запрос к БД, получаем роль пользователя
         # Здесь делаем запрос со списком вопросов для юзера и спикера
         global questions
         global role
 
-        role = 'Организатор'
+        role = get_user_status(users_personal_data['telegram_id'])
 
-        if role == 'Пользователь':
+        if role == 'GUEST':
             reply_markup = get_pretty_keyboard(menu_selection_buttons_for_user, 3)
-        if role == 'Спикер':
+        if role == 'SPEAKER':
             reply_markup = get_pretty_keyboard(menu_selection_buttons_for_speaker, 3)
-        if role == 'Организатор':
+        if role == 'ORGANISATOR':
             reply_markup = get_pretty_keyboard(menu_selection_buttons_for_organisator, 3)
 
         message = 'Выберите один из следующих пунктов: '
