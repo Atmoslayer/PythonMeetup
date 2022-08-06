@@ -94,6 +94,40 @@ class Speaker(models.Model):  # Все поля задаются в админк
         return self.name
 
 
+class Message(models.Model):
+    speaker = models.ForeignKey(
+        Speaker,
+        verbose_name='ID спикера',
+        related_name='speaker',
+        on_delete=models.DO_NOTHING,
+        blank=False,
+        null=False,
+    )
+    guest = models.ForeignKey(
+        Guest,
+        verbose_name='ID гостя',
+        related_name='guest',
+        on_delete=models.DO_NOTHING,
+        blank=False,
+        null=False,
+    )
+
+    question = models.TextField(
+        'Вопрос',
+        blank=False,
+        null=False,
+    )
+
+    answer = models.TextField(
+        'Ответ',
+        blank=True,
+        null=False,
+    )
+
+    def __str__(self):
+        return self.question
+
+
 def add_guest(user_note: dict) -> dict:
     add_guest = Guest(
         telegram_id=user_note['telegram_id'],
@@ -138,15 +172,15 @@ def edit_speaker(user_note: dict) -> dict:
 
 
 def get_events(group_id):
-    button_events={}
-    events = Event.objects.filter(group = group_id)
+    button_events = {}
+    events = Event.objects.filter(group=group_id)
     for event in events:
         button_events[f'{event.time} {event.title}'] = event.id
     return button_events
 
 
 def get_groups():
-    button_groups={}
+    button_groups = {}
     groups = Group.objects.all()
     for group in groups:
         button_groups[group.name] = group.id
@@ -184,7 +218,6 @@ def get_speaker(telegram_id: int) -> dict:
 
 
 def get_user_status(telegram_id: int) -> bool:
-
     if guest := get_guest(telegram_id):
         return guest['role']
     elif speaker := get_speaker(telegram_id):
@@ -192,14 +225,14 @@ def get_user_status(telegram_id: int) -> bool:
     else:
         return False
 
-def get_event_discription(event_id):
 
-    event = Event.objects.filter(id = event_id)[0]
+def get_event_discription(event_id):
+    event = Event.objects.filter(id=event_id)[0]
     event_discription = f'{event.time} {event.title}\n'
     event_speeches = event.speeches.all()
     for event_speech in event_speeches:
         event_discription += f'\n{event_speech.title}\n'
         speakers = event_speech.speakers_at_speech.all()
         for speaker in speakers:
-            event_discription +=f' {speaker.name}\n {speaker.position}\n {speaker.organization}\n'
+            event_discription += f' {speaker.name}\n {speaker.position}\n {speaker.organization}\n'
     return event_discription
