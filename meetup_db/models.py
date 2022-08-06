@@ -98,15 +98,16 @@ class Message(models.Model):
     speaker = models.ForeignKey(
         Speaker,
         verbose_name='ID спикера',
-        related_name='speaker',
+        related_name='questions',
         on_delete=models.DO_NOTHING,
         blank=False,
         null=False,
     )
+
     guest = models.ForeignKey(
         Guest,
         verbose_name='ID гостя',
-        related_name='guest',
+        related_name='answers',
         on_delete=models.DO_NOTHING,
         blank=False,
         null=False,
@@ -121,11 +122,18 @@ class Message(models.Model):
     answer = models.TextField(
         'Ответ',
         blank=True,
-        null=False,
+        null=True,
     )
 
     def __str__(self):
         return self.question
+
+
+def add_answer(answer_notes: dict) -> dict:
+    answer = Message.objects.filter(id=answer_notes['id'])
+    answer.update(answer=answer_notes['answer'])
+
+    return answer
 
 
 def add_guest(user_note: dict) -> dict:
@@ -136,6 +144,19 @@ def add_guest(user_note: dict) -> dict:
     add_guest.save()
 
     return get_guest(add_guest.telegram_id)
+
+
+def add_question(question_notes: dict) -> dict:
+    add_question = Message(
+        speaker_id=question_notes['speaker_id'],
+        guest_id=question_notes['guest_id'],
+        question=question_notes['question'],
+    )
+    add_question.save()
+
+    question = Message.objects.filter(id=add_question.id)
+
+    return question
 
 
 def add_speaker(user_note: dict) -> dict:
@@ -149,6 +170,13 @@ def add_speaker(user_note: dict) -> dict:
     add_speaker.save()
 
     return get_speaker(add_speaker.telegram_id)
+
+
+def delete_message(id: int) -> dict:
+    message = Message.objects.filter(id=id)
+    message.delete()
+
+    return message
 
 
 def edit_guest(user_note: dict) -> dict:
@@ -255,3 +283,17 @@ def get_event_speekers(event_id):
         for speaker in speakers:
             button_speakers[f'{speaker.name}\n{speaker.position}\n{speaker.organization}\n'] = speaker.telegram_id
     return button_speakers
+
+
+def get_questions(speaker_id: int) -> dict:
+    speaker = Speaker.objects.get(telegram_id=speaker_id)
+    questions = speaker.questions.values('id', 'question')
+
+    return questions
+
+
+def get_answers(guest_id: int) -> dict:
+    guest = Guest.objects.get(telegram_id=guest_id)
+    answers = guest.answers.values('id', 'answer')
+
+    return answers

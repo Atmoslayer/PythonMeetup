@@ -4,44 +4,43 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
-from meetup_db.models import add_guest
-from meetup_db.models import add_speaker
-from meetup_db.models import edit_guest
-from meetup_db.models import edit_speaker
-from meetup_db.models import get_events
-from meetup_db.models import get_groups
-from meetup_db.models import get_user_status
+from meetup_db.models import *
 
 
 if __name__ == '__main__':
 
     guest_1 = {
         'telegram_id': 51747500,
-        'name': 'Olga'  # Необязательный, при пустом значении ставится "Коллега"
+        'name': 'Ольга'  # Необязательный, при пустом значении ставится "Коллега"
     }
 
     guest_2 = {
         'telegram_id': guest_1['telegram_id'],
-        'name': 'Olga NIKOLAEVNA'  # Необязательный, при пустом значении ставится "Коллега"
+        'name': 'Ольга Николаевна'  # Необязательный, при пустом значении ставится "Коллега"
     }
-
-
 
     speaker_1 = {
         'telegram_id': 555899,
         'name': 'Сергей Петрович Шишкин',
         'position': 'DevOps Engineer',
         'organization': 'ОАО "Рубикон"',
-        'speeches_at_event': '14:50:00, Автоматизация рекламных коммуникаций'  # Уже из созданных  Speechs
+        'speeches_at_event': '14:50:00, Автоматизация рекламных коммуникаций'  # Уже из созданных Speachs
     }
 
-    print('REQUEST GUEST:', get_user_status(guest_1['telegram_id']))  # Несуществующий гость
-    print('ADD GUEST:', add_guest(guest_1))
-    print('REQUEST GUEST:', get_user_status(guest_1['telegram_id']))
-    print('EDIT GUEST:', edit_guest(guest_2))
-    print('REQUEST GUEST:', get_user_status(guest_1['telegram_id']))  # Несуществующий спикер
-    print('REQUEST GUEST:', get_user_status(speaker_1['telegram_id']))  # Cуществующий спикер
-    # ДОРАБОТКА print('ADD GUEST:', add_speaker(speaker_1))
-    # ДОРАБОТКА print('REQUEST GUEST:', get_user_status(speaker_1['telegram_id']))
+    guest_questions = {
+        'speaker_id': 12,
+        'guest_id': 500,
+        'question': 'Когда будут следующие доклады от вас?'
+    }
 
+    speaker_answers = {
+        'id': 10,
+        'answer': 'Тестовый ответ 1'
+    }
 
+    print('SPEAKER QUESTIONS:', get_questions(12))
+    print('GUEST ANSWERS:', get_answers(51747500))
+    print('ADD QUESTION:', add_question(guest_questions))
+    print('ADD ANSWER:', add_answer(speaker_answers))
+    print('DELETE MESSAGE:', delete_message(11))
+    print('GUEST ANSWERS:', get_answers(5072270))
