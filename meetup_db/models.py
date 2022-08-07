@@ -259,10 +259,10 @@ def get_event_discription(event_id):
     event_discription = f'{event.time} {event.title}\n'
     event_speeches = event.speeches.all()
     for event_speech in event_speeches:
-        event_discription += f'\n{event_speech.title}\n'
+        event_discription += f'\n*{event_speech.title}*\n Спикеры:\n'
         speakers = event_speech.speakers_at_speech.all()
         for speaker in speakers:
-            event_discription += f' {speaker.name}\n {speaker.position}\n {speaker.organization}\n'
+            event_discription += f' -{speaker.name}\n  {speaker.position}, {speaker.organization}\n'
     return event_discription
 
 
