@@ -245,11 +245,11 @@ def get_speaker(telegram_id: int) -> dict:
     return user_note
 
 
-def get_user_status(telegram_id: int) -> bool:
-    if guest := get_guest(telegram_id):
-        return guest['role']
-    elif speaker := get_speaker(telegram_id):
+def get_user_status(telegram_id: int):
+    if speaker := get_speaker(telegram_id):
         return speaker['role']
+    elif guest := get_guest(telegram_id):
+        return guest['role']
     else:
         return False
 
