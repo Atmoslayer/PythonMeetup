@@ -281,7 +281,8 @@ def get_event_speekers(event_id):
     for event_speech in event_speeches:
         speakers = event_speech.speakers_at_speech.all()
         for speaker in speakers:
-            button_speakers[f'{speaker.name}\n{speaker.position}\n{speaker.organization}\n'] = speaker.telegram_id
+            button_speakers[f'{speaker.name} {speaker.position} {speaker.organization}'] = speaker.telegram_id
+
     return button_speakers
 
 
