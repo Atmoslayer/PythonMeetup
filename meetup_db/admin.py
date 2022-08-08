@@ -12,7 +12,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 
 class GuestAdmin(admin.ModelAdmin):
-    list_display = ('telegram_id', 'name')
+    list_display = ('telegram_id', 'name', 'stance')
 
 
 class MessageAdmin(admin.ModelAdmin):
@@ -20,11 +20,11 @@ class MessageAdmin(admin.ModelAdmin):
 
 
 class SpeakerAdmin(admin.ModelAdmin):
-    list_display = ('telegram_id', 'name', 'position', 'organization',)
+    list_display = ('telegram_id', 'name', 'position', 'organization', 'stance')
 
 
 class SpeechAdmin(admin.ModelAdmin):
-    list_display = ('event', 'title',)
+    list_display = ('event', 'title')
 
 
 admin.site.register(Guest, GuestAdmin)

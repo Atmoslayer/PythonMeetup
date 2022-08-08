@@ -8,6 +8,8 @@ https://tutorial.djangogirls.org/ru/django_models/
 '''
 
 
+DEFAULT_POSITION = 'init'
+
 class Group(models.Model):  # Группы Вступительные, Пото1 , Поток 2.. Заключительные
     name = models.CharField('Группа', max_length=50)
 
@@ -22,6 +24,13 @@ class Guest(models.Model):
         primary_key=True,
     )
     name = models.CharField('Имя', max_length=50)  # Задается в диалоге с ботом
+    stance = models.CharField(  # Маркер для бота
+        'Состояние',
+        max_length=50,
+        default=DEFAULT_POSITION,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return self.name
@@ -88,6 +97,14 @@ class Speaker(models.Model):  # Все поля задаются в админк
         Speech,
         verbose_name='Выступления',
         related_name="speakers_at_speech",
+    )
+
+    stance = models.CharField(  # Маркер для бота
+        'Состояние',
+        max_length=50,
+        default=DEFAULT_POSITION,
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
