@@ -203,7 +203,7 @@ def get_events(group_id):
     button_events = {}
     events = Event.objects.filter(group=group_id)
     for event in events:
-        button_events[f'{event.time} {event.title}'] = event.id
+        button_events[f'{event.time.strftime("%H:%M")} {event.title}'] = event.id
     return button_events
 
 
@@ -256,7 +256,7 @@ def get_user_status(telegram_id: int):
 
 def get_event_discription(event_id):
     event = Event.objects.filter(id=event_id)[0]
-    event_discription = f'{event.time} {event.title}\n'
+    event_discription = f'{event.time.strftime("%H:%M")} {event.title}\n'
     event_speeches = event.speeches.all()
     for event_speech in event_speeches:
         event_discription += f'\n*{event_speech.title}*\n Спикеры:\n'
@@ -270,7 +270,7 @@ def get_speech_events(group_id):
     button_speech_events = {}
     speech_events = Event.objects.filter(group=group_id).filter(event_type='SP')
     for speech_event in speech_events:
-        button_speech_events[f'{speech_event.time} {speech_event.title}'] = speech_event.id
+        button_speech_events[f'{speech_event.time.strftime("%H:%M")} {speech_event.title}'] = speech_event.id
     return button_speech_events
 
 
