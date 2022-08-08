@@ -4,7 +4,8 @@ from transitions import Machine
 class PythonMeetupBot(object):
     states = ['say_hello', 'enter_name', 'select_a_section', 'go_to_programs',
               'go_to_questions', 'go_to_my_questions', 'go_to_settings',
-              'select_program', 'select_description', 'select_question', 'select_speaker']
+              'select_program', 'select_description',
+              'select_question', 'select_speaker', 'ask_question', 'send_question']
 
     def __init__(self, name):
         self.machine = Machine(model=self, states=PythonMeetupBot.states, initial='say_hello')
@@ -20,3 +21,6 @@ class PythonMeetupBot(object):
         self.machine.add_transition('description_selected', 'select_program', 'select_description')
         self.machine.add_transition('program_selected', 'go_to_questions', 'select_question')
         self.machine.add_transition('question_selected', 'select_question', 'select_speaker')
+        self.machine.add_transition('question_asked', 'select_speaker', 'ask_question')
+        self.machine.add_transition('question_sended', 'ask_question', 'send_question')
+        self.machine.add_transition('answer_sended', 'send_question', 'send_answer')

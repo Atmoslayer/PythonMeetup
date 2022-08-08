@@ -7,7 +7,7 @@ from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from telegram.ext import CallbackQueryHandler
 from telegram.ext import MessageHandler, Filters
-from telegram_bot import start, get_answer_name, message_handler
+from telegram_bot import start, callback_handler, message_handler
 
 
 if __name__ == '__main__':
@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     start_handler = CommandHandler('start', start)
     dispatcher.add_handler(start_handler)
-    updater.dispatcher.add_handler(CallbackQueryHandler(get_answer_name))
+    updater.dispatcher.add_handler(CallbackQueryHandler(callback_handler))
     updater.dispatcher.add_handler(MessageHandler(Filters.all, message_handler))
 
     updater.start_polling()
