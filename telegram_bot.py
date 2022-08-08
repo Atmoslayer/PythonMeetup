@@ -286,7 +286,7 @@ def message_handler(update, context):
 
     if text in back_button and user_stance == 'select_description':
         message = 'Предстоящие события'
-        reply_markup = get_pretty_keyboard(events_buttons + back_button, 2)
+        reply_markup = get_pretty_keyboard(events_buttons + back_button, 1)
 
         user_stance_data['stance'] = 'select_program'
         print(edit_user_stance(user_stance_data))
@@ -322,7 +322,7 @@ def message_handler(update, context):
         speech_events = get_speech_events(question_program_id)
         speech_events_buttons = list(speech_events.keys())
         message = 'Выберите время выступления'
-        reply_markup = get_pretty_keyboard(speech_events_buttons + back_button, 2)
+        reply_markup = get_pretty_keyboard(speech_events_buttons + back_button, 1)
 
         user_stance_data['stance'] = 'select_question'
         print(edit_user_stance(user_stance_data))
