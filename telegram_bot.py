@@ -6,8 +6,6 @@ from telegram import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import MessageHandler, Filters
 from telegram.error import BadRequest
 
-from finite_state_machine import PythonMeetupBot
-from transitions import MachineError
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
@@ -133,7 +131,6 @@ def start(update, context):
         reply_markup=reply_markup,
     )
 
-    bot = PythonMeetupBot('Meetup')
     user_stance_data = {}
     user_stance_data['telegram_id'] = user['id']
     user_stance_data['stance'] = 'say_hello'
@@ -367,7 +364,6 @@ def message_handler(update, context):
         user_data = get_guest(users_id)
         if not user_data:
             user_data = get_speaker(users_id)
-        print(user_data)
         users_name = user_data['name']
         question_message = f'{users_name} интересуется: {text}'
         question_info['speaker_id'] = speaker_id
