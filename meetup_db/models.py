@@ -248,6 +248,7 @@ def get_guest(telegram_id: int) -> dict:
     user_note = {
         'telegram_id': user.telegram_id,
         'name': user.name,
+        'stance': user.stance,
         'role': 'GUEST'
     }
 
@@ -263,6 +264,7 @@ def get_speaker(telegram_id: int) -> dict:
     user_note = {
         'telegram_id': user.telegram_id,
         'name': user.name,
+        'stance': user.stance,
         'role': 'SPEAKER'
     }
 
@@ -325,3 +327,26 @@ def get_answer(question_notes: dict) -> str:
     )
 
     return msg_notes.answer
+
+def get_user_stance(telegram_id: int):
+    if speaker := get_speaker(telegram_id):
+        return speaker['stance']
+    elif guest := get_guest(telegram_id):
+        return guest['stance']
+    else:
+        return False
+
+
+def edit_user_stance(user_notes: dict):
+    user_id = user_notes['telegram_id']
+
+    if speaker := get_speaker(user_id):
+        speaker = Speaker.objects.filter(telegram_id=user_id)
+        speaker.update(stance=user_notes['stance'])
+
+    if guest := get_guest(user_id):
+        guest = Guest.objects.filter(telegram_id=user_id)
+        guest.update(stance=user_notes['stance'])
+
+
+    return get_user_stance(user_notes['telegram_id'])

@@ -39,12 +39,14 @@ if __name__ == '__main__':
         'answer': 'Тестовый ответ 1'
     }
 
-
+    """
     print('SPEAKER QUESTIONS:', get_questions(12))
     print('ADD QUESTION:', add_question(guest_questions))
     print('ADD ANSWER:', add_answer(speaker_answers))
     print('GUEST ANSWER:', get_answer(guest_questions))
     print('DELETE MESSAGE:', delete_message(guest_questions))
+
+    """
 
     """
     add_question({
@@ -67,3 +69,24 @@ if __name__ == '__main__':
         'question': 'Когда будут следующие доклады от вас?'
     })  # Вернёт ответ str 
     """
+
+
+    print('GUEST GET STANCE:', get_user_stance(500))  # Передаём телеграмм ID
+    print('SPEAKER GET STANCE:', get_user_stance(12))  # Передаём телеграмм ID
+
+    print('EDIT GUEST STANCE:',
+          edit_user_stance({
+            'telegram_id': 500,
+            'stance': 'active'  # Поменяли позицию с init на active
+        })
+    )
+
+    print('EDIT SPEAKER STANCE:',
+          edit_user_stance({
+            'telegram_id': 12,
+            'stance': 'pass'  # Поменяли позицию с init на pass
+        })
+    )
+
+    print('GUEST GET STANCE:', get_user_stance(500))  # Передаём телеграмм ID
+    print('SPEAKER GET STANCE:', get_user_stance(12))  # Передаём телеграмм ID
