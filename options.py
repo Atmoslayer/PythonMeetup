@@ -34,13 +34,36 @@ if __name__ == '__main__':
     }
 
     speaker_answers = {
-        'id': 10,
+        'speaker_id': 12,
+        'guest_id': 500,
         'answer': 'Тестовый ответ 1'
     }
 
+
     print('SPEAKER QUESTIONS:', get_questions(12))
-    print('GUEST ANSWERS:', get_answers(51747500))
     print('ADD QUESTION:', add_question(guest_questions))
     print('ADD ANSWER:', add_answer(speaker_answers))
-    print('DELETE MESSAGE:', delete_message(11))
-    print('GUEST ANSWERS:', get_answers(5072270))
+    print('GUEST ANSWER:', get_answer(guest_questions))
+    print('DELETE MESSAGE:', delete_message(guest_questions))
+
+    """
+    add_question({
+        'speaker_id': 12,
+        'guest_id': 500,
+        'question': 'Когда будут следующие доклады от вас?'
+    })
+
+    get_questions(12) # принимает ID спикера
+
+    add_answer({
+        'speaker_id': 12,
+        'guest_id': 500,
+        'answer': 'Тестовый ответ 1'
+    }) 
+
+    get_answer({
+        'speaker_id': 12,
+        'guest_id': 500,
+        'question': 'Когда будут следующие доклады от вас?'
+    })  # Вернёт ответ str 
+    """

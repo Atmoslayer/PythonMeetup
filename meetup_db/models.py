@@ -130,7 +130,10 @@ class Message(models.Model):
 
 
 def add_answer(answer_notes: dict) -> dict:
-    answer = Message.objects.filter(id=answer_notes['id'])
+    answer = Message.objects.filter(
+        speaker_id=answer_notes['speaker_id'],
+        guest_id=answer_notes['guest_id'],
+    )
     answer.update(answer=answer_notes['answer'])
 
     return answer
@@ -172,11 +175,15 @@ def add_speaker(user_note: dict) -> dict:
     return get_speaker(add_speaker.telegram_id)
 
 
-def delete_message(id: int) -> dict:
-    message = Message.objects.filter(id=id)
-    message.delete()
+def delete_message(question_notes: dict) -> dict:
+    msg_notes = Message.objects.get(
+        speaker_id=question_notes['speaker_id'],
+        guest_id=question_notes['guest_id'],
+        question=question_notes['question']
+    )
+    msg_notes.delete()
 
-    return message
+    return msg_notes
 
 
 def edit_guest(user_note: dict) -> dict:
@@ -288,13 +295,16 @@ def get_event_speekers(event_id):
 
 def get_questions(speaker_id: int) -> dict:
     speaker = Speaker.objects.get(telegram_id=speaker_id)
-    questions = speaker.questions.values('id', 'question')
+    questions = speaker.questions.values('id', 'guest', 'question')
 
     return questions
 
 
-def get_answers(guest_id: int) -> dict:
-    guest = Guest.objects.get(telegram_id=guest_id)
-    answers = guest.answers.values('id', 'answer')
+def get_answer(question_notes: dict) -> str:
+    msg_notes = Message.objects.get(
+        speaker_id=question_notes['speaker_id'],
+        guest_id=question_notes['guest_id'],
+        question=question_notes['question']
+    )
 
-    return answers
+    return msg_notes.answer
