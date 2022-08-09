@@ -11,9 +11,9 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
 from meetup_db.models import Group, Guest, Event, Speech, Speaker
-from meetup_db.models import get_events, get_groups, get_event_discription, \
+from meetup_db.models import get_events, get_groups, get_event_description, \
     add_guest, get_user_status, get_speech_events, \
-    get_event_speekers, get_guest, get_speaker, add_question,  get_questions, get_answer, add_answer, get_user_stance, edit_user_stance
+    get_event_speakers, get_guest, get_speaker, add_question,  get_questions, get_answer, add_answer, get_user_stance, edit_user_stance
 
 
 question_info = {}
@@ -292,7 +292,7 @@ def message_handler(update, context):
 
     if text in events_buttons and user_stance == 'select_program':
         event_id = events[text]
-        event_description = get_event_discription(event_id)
+        event_description = get_event_description(event_id)
         message = event_description
         reply_markup = get_keyboard(back_button)
 
@@ -328,7 +328,7 @@ def message_handler(update, context):
         global event_speaker_buttons
         global event_speakers
         speech_event_id = speech_events[text]
-        event_speakers = get_event_speekers(speech_event_id)
+        event_speakers = get_event_speakers(speech_event_id)
         event_speaker_buttons = list(event_speakers.keys())
         message = 'Выберите спикера, которому хотите задать вопрос'
 
