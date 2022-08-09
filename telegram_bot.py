@@ -451,6 +451,8 @@ def message_handler(update, context):
         answer_message = f'{speaker_info["name"]} ответил на Ваш вопрос: {question_text}. Ответ: {text}'
         context.bot.sendMessage(user_id, text=answer_message)
 
-
-    if message:
-        send_message(update, message, reply_markup)
+    try:
+        if message:
+            send_message(update, message, reply_markup)
+    except UnboundLocalError as message_error:
+        print(message_error)
