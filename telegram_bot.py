@@ -83,8 +83,6 @@ def get_main_menu_markup(user_stance_data):
         reply_markup = get_pretty_keyboard(menu_selection_buttons_for_user, 3)
     if role == 'SPEAKER':
         reply_markup = get_pretty_keyboard(menu_selection_buttons_for_speaker, 3)
-    if role == 'ORGANISATOR':
-        reply_markup = get_pretty_keyboard(menu_selection_buttons_for_organisator, 3)
 
     user_stance_data['stance'] = 'select_a_section'
     print(edit_user_stance(user_stance_data))
