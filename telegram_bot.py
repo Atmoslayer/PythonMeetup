@@ -255,8 +255,6 @@ def message_handler(update, context):
 
         user_stance_data['stance'] = 'go_to_programs'
         print(edit_user_stance(user_stance_data))
-        # bot.state = 'go_to_programs'
-        # print(bot.state)
 
     if (text in program_buttons) and (user_stance == 'go_to_programs'):
 
@@ -270,9 +268,6 @@ def message_handler(update, context):
 
         user_stance_data['stance'] = 'select_program'
         print(edit_user_stance(user_stance_data))
-        # bot.state = 'select_program'
-        # print(bot.state)
-
     if text in back_button and user_stance == 'select_description':
         message = 'Предстоящие события'
         reply_markup = get_pretty_keyboard(events_buttons + back_button, 1)
