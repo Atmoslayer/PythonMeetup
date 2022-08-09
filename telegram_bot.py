@@ -13,22 +13,16 @@ django.setup()
 from meetup_db.models import Group, Guest, Event, Speech, Speaker
 from meetup_db.models import get_events, get_groups, get_event_description, \
     add_guest, get_user_status, get_speech_events, \
-    get_event_speakers, get_guest, get_speaker, add_question,  get_questions, get_answer, add_answer, get_user_stance, edit_user_stance
+    get_event_speakers, get_guest, get_speaker, add_question,  \
+    get_questions, get_answer, add_answer, get_user_stance, edit_user_stance
 
 
 question_info = {}
 message = []
 menu_button = ['Меню']
 menu_selection_buttons_for_user = ['📋Программа', '🗣Задать вопрос спикеру', '❓Мои вопросы']
-menu_selection_buttons_for_organisator = ['📋Программа', '🗣Задать вопрос спикеру', '⚙Настройки', '❓Мои вопросы']
 menu_selection_buttons_for_speaker = ['📋Программа', '🗣Задать вопрос спикеру', '❓Мои вопросы']
-settings_buttons = ['✔Зарегистрировать спикера',
-                    '✔Зарегистрировать организатора',
-                    '✔Зарегистрировать мероприятие',
-                    '❌Удалить спикера',
-                     '❌Удалить организатора',
-                     '❌Удалить мероприятие',
-                    '📍Главное меню']
+
 program_buttons = []
 events_buttons = []
 main_back_button = ['📍Главное меню']
@@ -287,8 +281,6 @@ def message_handler(update, context):
 
         user_stance_data['stance'] = 'select_program'
         print(edit_user_stance(user_stance_data))
-        # bot.state = 'select_program'
-        # print(bot.state)
 
     if text in events_buttons and user_stance == 'select_program':
         event_id = events[text]
@@ -298,8 +290,6 @@ def message_handler(update, context):
 
         user_stance_data['stance'] = 'select_description'
         print(edit_user_stance(user_stance_data))
-        # bot.description_selected()
-        # print(bot.state)
 
     if (text == '🗣Задать вопрос спикеру' or text in back_button) and (user_stance == 'select_a_section' or user_stance == 'select_question'):
 
@@ -307,8 +297,6 @@ def message_handler(update, context):
         reply_markup, message, question_programs = get_programs_menu('Вопросы')
         user_stance_data['stance'] = 'go_to_questions'
         print(edit_user_stance(user_stance_data))
-        # bot.state = 'go_to_questions'
-        # print(bot.state)
 
     if (text in program_buttons) and (user_stance == 'go_to_questions'):
 
@@ -334,8 +322,6 @@ def message_handler(update, context):
 
         user_stance_data['stance'] = 'select_speaker'
         print(edit_user_stance(user_stance_data))
-        # bot.question_selected()
-        # print(bot.state)
         reply_markup = get_pretty_keyboard(event_speaker_buttons + back_button, 1)
 
 
@@ -376,8 +362,6 @@ def message_handler(update, context):
 
         user_stance_data['stance'] = 'send_question'
         print(edit_user_stance(user_stance_data))
-        # bot.question_sended()
-        # print(bot.state)
         try:
             context.bot.sendMessage(speaker_id, text=question_message, reply_markup=reply_markup_for_question)
             message = 'Ваш вопрос отправлен'
@@ -391,56 +375,23 @@ def message_handler(update, context):
 
         user_stance_data['stance'] = 'select_question'
         print(edit_user_stance(user_stance_data))
-        # bot.state = 'select_question'
-        # print(bot.state)
-
     if text in back_button and user_stance == 'send_question':
         message = 'Выберите спикера, которому хотите задать вопрос'
         reply_markup = get_pretty_keyboard(event_speaker_buttons + back_button, 1)
 
         user_stance_data['stance'] = 'select_speaker'
         print(edit_user_stance(user_stance_data))
-        # bot.state = 'select_speaker'
-        # print(bot.state)
 
-
-    # if text == '⚙Настройки' and bot.state == 'select_a_section' and role == 'Организатор':
-    #     message = 'Выберите действие'
-    #     reply_markup = get_pretty_keyboard(settings_buttons, 1)
-    #     bot.settings()
-    #     print(bot.state)
-    #
-    # if text == '❓Мои вопросы' and bot.state == 'select_a_section' and role == 'SPEAKER':
-    #     questions_button = ['📍Главное меню']
-    #
-    #     if questions:
-    #         message = 'Список заданных Вам вопросов'
-    #     else:
-    #         message = 'Вопросов пока нет'
-    #
-    #     reply_markup = get_pretty_keyboard(questions_button, 2)
-    #
-    # if text == '❓Мои вопросы' and bot.state == 'select_a_section' and role == 'GUEST':
-    #     questions_button = ['📍Главное меню']
-    #
-    #     if questions:
-    #         message = 'Список заданных Вам вопросов'
-    #     else:
-    #         message = 'Вопросов пока нет'
-    #
-    #     reply_markup = get_pretty_keyboard(questions_button, 2)
 
     if text and user_stance == 'send_answer':
 
         user_id = user_data['telegram_id']
         question_data = {}
 
-        # Добавление ответа в БД
         message = 'Спасибо, Ваш ответ отправлен'
         reply_markup = get_keyboard(['📍Главное меню'])
         user_stance_data['stance'] = 'select_speaker'
         print(edit_user_stance(user_stance_data))
-        # bot.state = 'select_a_section'
         speaker_id = update['message']['chat']['id']
         questions = get_questions(speaker_id)
         speaker_info = get_speaker(speaker_id)
