@@ -160,6 +160,7 @@ def add_guest(user_note: dict) -> dict:
     add_guest = Guest(
         telegram_id=user_note['telegram_id'],
         name=user_note.setdefault('name', 'Коллега'),
+        stance=user_note.setdefault('stance', 'init')
     )
     add_guest.save()
 
@@ -167,7 +168,12 @@ def add_guest(user_note: dict) -> dict:
 
 
 def add_question(question_notes: dict) -> dict:
-    add_question = Message(
+    guest_id = question_notes['guest_id']
+
+    if not get_guest(guest_id):
+        add_speaker_to_guest(guest_id)
+
+    message_notes = Message(
         speaker_id=question_notes['speaker_id'],
         guest_id=question_notes['guest_id'],
         question=question_notes['question'],
@@ -179,17 +185,12 @@ def add_question(question_notes: dict) -> dict:
     return question
 
 
-def add_speaker(user_note: dict) -> dict:
-    add_speaker = Speaker(
-        telegram_id=user_note['telegram_id'],
-        name=user_note.setdefault('name', 'Коллега'),
-        position=user_note['position'],
-        organization=user_note['organization'],
-        speeches_at_event=user_note['speeches_at_event'],
-    )
-    add_speaker.save()
+def add_speaker_to_guest(telegram_id: int) -> dict:
+    speaker_notes = get_speaker(telegram_id)
+    add_guest(speaker_notes)
+    guest_notes = get_guest(telegram_id)
 
-    return get_speaker(add_speaker.telegram_id)
+    return guest_notes
 
 
 def delete_message(question_notes: dict) -> dict:
