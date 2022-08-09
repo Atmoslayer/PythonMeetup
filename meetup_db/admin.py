@@ -3,28 +3,28 @@ from django.contrib import admin
 from .models import *
 
 
+class GroupAdmin(admin.ModelAdmin):
+    list_display = ('name','id')
+
+
 class EventAdmin(admin.ModelAdmin):
     list_display = ('group', 'time', 'title', 'event_type')
 
 
-class GroupAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+class SpeechAdmin(admin.ModelAdmin):
+    list_display = ('event', 'title')
+
+
+class SpeakerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'position', 'organization', 'telegram_id', 'stance')
 
 
 class GuestAdmin(admin.ModelAdmin):
-    list_display = ('telegram_id', 'name', 'stance')
+    list_display = ('name', 'telegram_id', 'stance')
 
 
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('id', 'speaker_id', 'guest_id', 'question', 'answer')
-
-
-class SpeakerAdmin(admin.ModelAdmin):
-    list_display = ('telegram_id', 'name', 'position', 'organization', 'stance')
-
-
-class SpeechAdmin(admin.ModelAdmin):
-    list_display = ('event', 'title')
 
 
 admin.site.register(Guest, GuestAdmin)
